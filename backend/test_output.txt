@@ -1,0 +1,14 @@
+Iniciando test de sincronizacion SII...
+============================================================
+
+Enviando POST a http://localhost:5000/api/sync-sii
+Payload: {
+  "rut": "77956294-8",
+  "password": "Tr7795629.",
+  "mes": 11,
+  "ano": 2025
+}
+
+Esperando respuesta (30-60 segundos)...
+
+Error de conexion - El servidor no esta escuchando

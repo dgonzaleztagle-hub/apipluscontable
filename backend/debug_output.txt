@@ -1,0 +1,19 @@
+2025-12-03 19:13:44,343 - INFO - \u2713 Pßgina de login cargada
+2025-12-03 19:13:45,981 - INFO - \u2713 Login completado
+2025-12-03 19:13:48,993 - INFO - 
+=== EXAMINANDO TODOS LOS SELECTS ===
+
+2025-12-03 19:13:49,011 - INFO - Total de selects: 3
+
+2025-12-03 19:13:49,030 - INFO - --- SELECT #0 ---
+2025-12-03 19:13:49,030 - INFO -   name: rut
+2025-12-03 19:13:49,030 - INFO -   ng-model: rut
+2025-12-03 19:13:49,030 - INFO -   class: form-control ng-pristine ng-untouched ng-not-empty ng-valid ng-valid-required
+2025-12-03 19:13:49,036 - INFO -   Opciones: 2
+2025-12-03 19:13:49,047 - INFO -     [0] value='' \u2192 'Empresa'
+2025-12-03 19:13:49,057 - INFO -     [1] value='77956294-8' \u2192 '77956294-8'
+2025-12-03 19:13:49,057 - ERROR - ERROR: Logger.info() missing 1 required positional argument: 'msg'
+Traceback (most recent call last):
+  File "D:\proyectos\pluscontableapisii\backend\debug_selects.py", line 68, in <module>
+    logger.info()
+TypeError: Logger.info() missing 1 required positional argument: 'msg'
