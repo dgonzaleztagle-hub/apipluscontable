@@ -1,0 +1,7 @@
+{
+  "include": ["."],
+  "exclude": ["venv", "**/__pycache__"],
+  "typeCheckingMode": "off",
+  "pythonVersion": "3.12",
+  "pythonPlatform": "Windows"
+}
