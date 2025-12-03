@@ -39,7 +39,7 @@ def health():
     """Health check endpoint"""
     return jsonify({
         'status': 'ok',
-        'service': 'PlusContableAPISII',
+        'service': 'PlusContableAPISII v2.0',
         'timestamp': datetime.now().isoformat()
     }), 200
 
