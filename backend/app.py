@@ -37,10 +37,15 @@ logger.info("Servicios SII importados correctamente")
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
+    endpoints = []
+    for rule in app.url_map.iter_rules():
+        endpoints.append(str(rule))
+    
     return jsonify({
         'status': 'ok',
         'service': 'PlusContableAPISII v2.0',
-        'timestamp': datetime.now().isoformat()
+        'timestamp': datetime.now().isoformat(),
+        'endpoints': sorted(endpoints)
     }), 200
 
 
