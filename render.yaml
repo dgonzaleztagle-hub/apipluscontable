@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: pluscontable-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install -r backend/requirements.txt && \
+      pip install gunicorn && \
+      playwright install chromium
+    startCommand: |
+      cd backend && \
+      gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120 --workers 1
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: PORT
+        value: "5000"
