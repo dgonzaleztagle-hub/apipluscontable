@@ -35,13 +35,13 @@ class SIIScraper:
     DESTINATION_URL = "https://www4.sii.cl/consdcvinternetui/#/index"
     BOOKS_API_URL = "https://www4.sii.cl/consdcvinternetui/services/data/facadeService/getResumen"
     
-    def __init__(self, headless: bool = True, timeout: int = 60000):
+    def __init__(self, headless: bool = True, timeout: int = 120000):
         """
         Inicializar el scraper
         
         Args:
             headless: Ejecutar navegador sin interfaz gráfica
-            timeout: Timeout en milisegundos para operaciones
+            timeout: Timeout en milisegundos para operaciones (aumentado a 120s para Render)
         """
         if not PLAYWRIGHT_AVAILABLE:
             raise ImportError("Playwright no está instalado. Ejecuta: pip install playwright && playwright install chromium")
@@ -90,8 +90,8 @@ class SIIScraper:
                 """)
                 
                 try:
-                    # Ir a página de login
-                    page.goto(self.LOGIN_URL, wait_until="networkidle", timeout=self.timeout)
+                    # Ir a página de login (cambiar de networkidle a domcontentloaded para Render)
+                    page.goto(self.LOGIN_URL, wait_until="domcontentloaded", timeout=self.timeout)
                     logger.info("Página de login cargada")
                     
                     # Llenar formulario de login
@@ -102,7 +102,7 @@ class SIIScraper:
                     page.click('button[type="submit"]')
                     
                     # Esperar respuesta
-                    page.wait_for_load_state("networkidle", timeout=self.timeout)
+                    page.wait_for_load_state("domcontentloaded", timeout=self.timeout)
                     
                     # Verificar si hay error de autenticación
                     if "Usuario no existe" in page.content() or "Clave incorrecta" in page.content():
@@ -226,8 +226,8 @@ class SIIScraper:
             page.click('button#bt_ingresar')
             logger.info("Click en submit realizado, esperando respuesta...")
             
-            # Esperar a que se cargue la página de libros (networkidle es importante para SPAs)
-            page.wait_for_load_state("networkidle", timeout=self.timeout)
+            # Esperar a que se cargue la página de libros (domcontentloaded es más rápido para Render)
+            page.wait_for_load_state("domcontentloaded", timeout=self.timeout)
             logger.info(f"Login completado. URL actual: {page.url}")
             
             # Verificar si estamos en la página de libros
@@ -293,7 +293,7 @@ class SIIScraper:
             current_url = page.url
             if "consdcvinternetui" not in current_url:
                 logger.warning(f"No estamos en la página de libros. URL actual: {current_url}")
-                page.goto("https://www4.sii.cl/consdcvinternetui/#/index", wait_until="networkidle", timeout=self.timeout)
+                page.goto("https://www4.sii.cl/consdcvinternetui/#/index", wait_until="domcontentloaded", timeout=self.timeout)
                 logger.info("Navegado a página de libros")
             
             # Convertir número de mes a nombre en español
