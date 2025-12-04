@@ -9,5 +9,5 @@ PYTHONUNBUFFERED = "1"
 channel = "stable-22_11"
 
 [[ports]]
+internal = 5000
 start = 5000
-end = 5000
