@@ -1,0 +1,13 @@
+run = "cd backend && pip install -r requirements.txt && gunicorn app:app --bind 0.0.0.0:5000 --timeout 120"
+language = "python3"
+
+[env]
+FLASK_ENV = "production"
+PYTHONUNBUFFERED = "1"
+
+[nix]
+channel = "stable-22_11"
+
+[[ports]]
+start = 5000
+end = 5000
