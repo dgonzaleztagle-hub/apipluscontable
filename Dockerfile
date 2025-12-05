@@ -41,4 +41,6 @@ RUN pip install --no-cache-dir playwright~=1.40.0 && \
 
 EXPOSE 5000
 
-CMD ["python", "-m", "gunicorn.app.wsgiapp", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]
+# Use exec form with full path to ensure it works
+ENTRYPOINT ["/usr/local/bin/python"]
+CMD ["-m", "gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]
