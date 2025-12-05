@@ -138,33 +138,45 @@ class SIIScraper:
         """
         try:
             logger.info(f"Iniciando fetch de {book_type} para RUT: {rut}, mes: {mes}, año: {ano}")
+            logger.info(f"Playwright disponible: {PLAYWRIGHT_AVAILABLE}")
             
+            logger.info("Iniciando Playwright...")
             with sync_playwright() as p:
-                browser = p.chromium.launch(
-                    headless=self.headless,
-                    args=[
-                        '--disable-blink-features=AutomationControlled',
-                        '--disable-dev-shm-usage',
-                        '--no-sandbox',
-                        '--disable-gpu',
-                    ]
-                )
-                context = browser.new_context()
-                page = context.new_page()
-                
-                # Anti-bot stealth
-                page.add_init_script("""
-                    Object.defineProperty(navigator, 'webdriver', {
-                        get: () => false,
-                    });
-                """)
-                
+                logger.info("Playwright context creado, lanzando Chromium...")
                 try:
+                    browser = p.chromium.launch(
+                        headless=self.headless,
+                        args=[
+                            '--disable-blink-features=AutomationControlled',
+                            '--disable-dev-shm-usage',
+                            '--no-sandbox',
+                            '--disable-gpu',
+                        ]
+                    )
+                    logger.info("Chromium lanzado exitosamente")
+                except Exception as e:
+                    logger.error(f"FALLO al lanzar Chromium: {str(e)}", exc_info=True)
+                    return None
+                    
+                try:
+                    context = browser.new_context()
+                    page = context.new_page()
+                    logger.info("Página de navegador creada")
+                    
+                    # Anti-bot stealth
+                    page.add_init_script("""
+                        Object.defineProperty(navigator, 'webdriver', {
+                            get: () => false,
+                        });
+                    """)
+                    
                     # Realizar login
+                    logger.info("Iniciando procedimiento de login...")
                     if not self._login(page, rut, password):
                         logger.error("Fallo en login")
                         return None
                     
+                    logger.info("Login exitoso, obteniendo datos de libros...")
                     # Obtener libros (solo COMPRAS por ahora)
                     books = self._fetch_book_data(page, book_type, mes, ano)
                     
@@ -173,10 +185,13 @@ class SIIScraper:
                     return books
                     
                 finally:
+                    logger.info("Cerrando navegador...")
                     browser.close()
                     
         except Exception as e:
-            logger.error(f"Error al obtener {book_type}: {str(e)}", exc_info=True)
+            logger.error(f"EXCEPCIÓN al obtener {book_type}: {str(e)}", exc_info=True)
+            import traceback
+            logger.error(f"Traceback completo: {traceback.format_exc()}")
             return None
     
     def _login(self, page, rut: str, password: str) -> bool:
