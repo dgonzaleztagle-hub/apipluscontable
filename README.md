@@ -56,3 +56,4 @@ Servidor disponible en `http://localhost:5000`
 - Este es solo el backend. El frontend en React se desarrollará en Lovable.
 - Las credenciales del SII se pasan en cada request (no se guardan en el servidor).
 - El scraping puede tardar 30-60 segundos por sincronización.
+# Rebuild trigger
