@@ -59,6 +59,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir playwright~=1.40.0 && \
     python -m playwright install chromium
 
+# Verify gunicorn is installed
+RUN which python && python -m pip list | grep gunicorn
+
 EXPOSE 5000
 
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1", "--worker-class", "sync"]CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]
+CMD ["python", "-m", "gunicorn.app.wsgiapp", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]
