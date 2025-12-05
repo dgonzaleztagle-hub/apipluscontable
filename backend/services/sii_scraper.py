@@ -411,10 +411,10 @@ class SIIScraper:
                 logger.error(f"Error clickeando Consultar: {e}")
                 return None
             
-            # PASO 4.5: Cambiar tab para VENTAS (si aplica)
+            # PASO 5: Cambiar tab para VENTAS (si aplica)
             if book_type == "VENTAS":
                 try:
-                    logger.info("PASO 4.5: Clickeando tab VENTA (reconociendo texto)...")
+                    logger.info("PASO 5: Clickeando tab VENTA (reconociendo texto)...")
                     
                     # Buscar elemento que contiene el texto "VENTA" exacto
                     venta_tab = page.locator('text="VENTA"')
@@ -435,9 +435,9 @@ class SIIScraper:
                     logger.warning(f"  ⚠ Error en cambio de tab VENTA: {e}")
                     # Continuar de todas formas
             
-            # PASO 5: Extraer CSV desde el data URI del link
+            # PASO 6: Extraer CSV desde el data URI del link
             try:
-                logger.info("PASO 5: Buscando link de descarga con data URI...")
+                logger.info("PASO 6: Buscando link de descarga con data URI...")
                 
                 # Primero, esperar a que el botón "Descargar" sea visible
                 # (así como esperamos a que "Consultar" fuera visible en PASO 4)
