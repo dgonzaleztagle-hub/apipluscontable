@@ -411,19 +411,28 @@ class SIIScraper:
                 logger.error(f"Error clickeando Consultar: {e}")
                 return None
             
-            # PASO 4.5: Navegación Angular para VENTAS
+            # PASO 4.5: Cambiar tab para VENTAS (si aplica)
             if book_type == "VENTAS":
                 try:
-                    logger.info("PASO 4.5: Navegando a tab VENTAS vía Angular...")
-                    page.goto("https://www4.sii.cl/consdcvinternetui/#/venta/", wait_until="networkidle", timeout=self.timeout)
-                    logger.info("✓ Navegado a VENTAS")
+                    logger.info("PASO 4.5: Clickeando tab VENTA (reconociendo texto)...")
                     
-                    # Esperar 5 segundos para asegurar renderizado completo
-                    logger.info("  Esperando 5 segundos para renderizado de VENTAS...")
-                    page.wait_for_timeout(5000)
-                    logger.info("✓ Espera completada")
+                    # Buscar elemento que contiene el texto "VENTA" exacto
+                    venta_tab = page.locator('text="VENTA"')
+                    
+                    if venta_tab.count() > 0:
+                        logger.info("  ✓ Tab VENTA encontrado por texto")
+                        venta_tab.click()
+                        logger.info("  ✓ Click en tab VENTA realizado")
+                        
+                        # Esperar a que Angular renderice VENTAS (puede demorar)
+                        logger.info("  Esperando renderizado de VENTAS después del cambio de tab...")
+                        page.wait_for_timeout(2000)
+                        logger.info("  ✓ Renderizado completado")
+                    else:
+                        logger.warning("  ⚠ Tab VENTA no encontrado por texto, continuando...")
+                        
                 except Exception as e:
-                    logger.warning(f"⚠ Error en navegación Angular VENTAS: {e}")
+                    logger.warning(f"  ⚠ Error en cambio de tab VENTA: {e}")
                     # Continuar de todas formas
             
             # PASO 5: Extraer CSV desde el data URI del link
