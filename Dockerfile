@@ -43,8 +43,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 \
     libxss1 \
     libxtst6 \
-    fonts-noto-cjk \
-    fonts-noto-color-emoji \
     fonts-liberation \
     xdg-utils \
     && apt-get clean \
@@ -57,8 +55,9 @@ COPY backend/ /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Install Playwright - it will download and use its own Chromium binary
+# Do NOT use --with-deps, just install the browser binary
 RUN pip install --no-cache-dir playwright~=1.40.0 && \
-    python -m playwright install --with-deps chromium
+    python -m playwright install chromium
 
 EXPOSE 5000
 
