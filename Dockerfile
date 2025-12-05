@@ -1,39 +1,33 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 
-# Install system dependencies for Chromium on Alpine
-RUN apk add --no-cache \
+# Install only the MINIMAL system dependencies Chromium needs at runtime
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgbm1 \
+    libgtk-3-0 \
+    libpango-1.0-0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxkbcommon0 \
     ca-certificates \
-    libcairo \
-    libcups \
-    libdbus \
-    libexpat \
-    libfontconfig \
-    libfreetype \
-    libgbm \
-    libglib \
-    libharfbuzz \
-    libnss \
-    libpango \
-    libpixman \
-    libx11 \
-    libxcb \
-    libxcomposite \
-    libxcursor \
-    libxdamage \
-    libxext \
-    libxfixes \
-    libxi \
-    libxinerama \
-    libxkbcommon \
-    libxrandr \
-    libxrender \
-    libxss \
-    libxtst \
-    liberation-fonts \
-    xdg-utils \
-    && adduser -D nonroot
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy backend files
 COPY backend/ /app/
@@ -46,8 +40,5 @@ RUN pip install --no-cache-dir playwright~=1.40.0 && \
     python -m playwright install chromium
 
 EXPOSE 5000
-
-# Run as non-root user
-USER nonroot
 
 CMD ["python", "-m", "gunicorn.app.wsgiapp", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000", "--timeout", "120", "--workers", "1"]
