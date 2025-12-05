@@ -90,8 +90,8 @@ class SIIScraper:
                 """)
                 
                 try:
-                    # Ir a página de login (cambiar de networkidle a domcontentloaded para Render)
-                    page.goto(self.LOGIN_URL, wait_until="domcontentloaded", timeout=self.timeout)
+                    # Ir a página de login (usando networkidle para mejor estabilidad en Railway)
+                    page.goto(self.LOGIN_URL, wait_until="networkidle", timeout=self.timeout)
                     logger.info("Página de login cargada")
                     
                     # Llenar formulario de login
@@ -308,7 +308,7 @@ class SIIScraper:
             current_url = page.url
             if "consdcvinternetui" not in current_url:
                 logger.warning(f"No estamos en la página de libros. URL actual: {current_url}")
-                page.goto("https://www4.sii.cl/consdcvinternetui/#/index", wait_until="domcontentloaded", timeout=self.timeout)
+                page.goto("https://www4.sii.cl/consdcvinternetui/#/index", wait_until="networkidle", timeout=self.timeout)
                 logger.info("Navegado a página de libros")
             
             # Convertir número de mes a nombre en español
@@ -322,14 +322,14 @@ class SIIScraper:
             logger.info("PASO 0: Esperando a que los selects estén disponibles en el DOM...")
             # ESPERAR ACTIVAMENTE a que los selects aparezcan - esto es CRÍTICO
             try:
-                page.locator("select").first.wait_for(state="attached", timeout=15000)
+                page.locator("select").first.wait_for(state="attached", timeout=30000)
                 logger.info("✓ Selectores detectados en el DOM")
             except PlaywrightTimeoutError:
                 logger.error("Timeout esperando selectores - página no renderizó correctamente")
                 return None
             
             # Dar tiempo adicional para que Angular termide de renderizar
-            page.wait_for_timeout(2000)
+            page.wait_for_timeout(3000)
             logger.info("✓ Página lista para interactuar")
             
             # PASO 1: Seleccionar el tipo de libro (COMPRA o VENTA)
