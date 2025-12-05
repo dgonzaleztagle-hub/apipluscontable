@@ -332,26 +332,7 @@ class SIIScraper:
             page.wait_for_timeout(3000)
             logger.info("✓ Página lista para interactuar")
             
-            # PASO 1: Seleccionar el tipo de libro (COMPRA o VENTA)
-            try:
-                logger.info(f"PASO 1: Seleccionando tab: {book_type}")
-                
-                # Buscar tab por texto usando locator
-                if book_type == "COMPRAS":
-                    tab_locator = page.locator("button, a, [role='tab']").filter(has_text="COMPRA").first
-                elif book_type == "VENTAS":
-                    tab_locator = page.locator("button, a, [role='tab']").filter(has_text="VENTA").first
-                
-                # Esperar a que sea visible
-                tab_locator.wait_for(state="visible", timeout=5000)
-                tab_locator.click()
-                logger.info(f"✓ Tab {book_type} clickeado")
-                
-                page.wait_for_timeout(1500)
-            except PlaywrightTimeoutError:
-                logger.warning(f"Timeout esperando tab {book_type} - puede estar ya seleccionado")
-            except Exception as e:
-                logger.warning(f"Error al cambiar tab: {e}")
+            # NOTA: No hay PASO 1 - no existen tabs iniciales, el formulario es compartido
             
             # PASO 2: Seleccionar mes
             try:
@@ -429,6 +410,21 @@ class SIIScraper:
             except Exception as e:
                 logger.error(f"Error clickeando Consultar: {e}")
                 return None
+            
+            # PASO 4.5: Navegación Angular para VENTAS
+            if book_type == "VENTAS":
+                try:
+                    logger.info("PASO 4.5: Navegando a tab VENTAS vía Angular...")
+                    page.goto("https://www4.sii.cl/consdcvinternetui/#/venta/", wait_until="networkidle", timeout=self.timeout)
+                    logger.info("✓ Navegado a VENTAS")
+                    
+                    # Esperar 5 segundos para asegurar renderizado completo
+                    logger.info("  Esperando 5 segundos para renderizado de VENTAS...")
+                    page.wait_for_timeout(5000)
+                    logger.info("✓ Espera completada")
+                except Exception as e:
+                    logger.warning(f"⚠ Error en navegación Angular VENTAS: {e}")
+                    # Continuar de todas formas
             
             # PASO 5: Extraer CSV desde el data URI del link
             try:
