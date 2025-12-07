@@ -332,7 +332,34 @@ class SIIScraper:
             page.wait_for_timeout(3000)
             logger.info("✓ Página lista para interactuar")
             
-            # NOTA: No hay PASO 1 - no existen tabs iniciales, el formulario es compartido
+            # PASO 1: Detectar y seleccionar RUT si es persona natural
+            try:
+                rut_select = page.locator("select").first
+                is_disabled = rut_select.get_attribute("disabled")
+                
+                if not is_disabled:
+                    # Persona natural - cascada habilitada
+                    logger.info("PASO 1: RUT Persona Natural detectado - seleccionando RUT...")
+                    
+                    options = rut_select.locator("option")
+                    option_count = options.count()
+                    logger.info(f"  Opciones disponibles: {option_count}")
+                    
+                    for i in range(option_count):
+                        option_text = options.nth(i).inner_text()
+                        logger.info(f"    Opción {i}: {option_text}")
+                        
+                        # Buscar el RUT del request en las opciones
+                        if rut in option_text:
+                            rut_select.select_option(options.nth(i).get_attribute("value"))
+                            logger.info(f"  ✓ RUT seleccionado: {option_text}")
+                            page.wait_for_timeout(1000)
+                            break
+                else:
+                    logger.info("PASO 1: RUT Empresa detectado - cascada deshabilitada")
+                    
+            except Exception as e:
+                logger.warning(f"  ⚠ Error en PASO 1: {e}")
             
             # PASO 2: Seleccionar mes
             try:
