@@ -178,7 +178,7 @@ class SIIScraper:
                     
                     logger.info("Login exitoso, obteniendo datos de libros...")
                     # Obtener libros (solo COMPRAS por ahora)
-                    books = self._fetch_book_data(page, book_type, mes, ano)
+                    books = self._fetch_book_data(page, book_type, mes, ano, rut)
                     
                     logger.info(f"{book_type} obtenidos: {len(books) if books else 0} registros")
                     
@@ -288,7 +288,7 @@ class SIIScraper:
             logger.error(f"Error durante login: {str(e)}", exc_info=True)
             return False
     
-    def _fetch_book_data(self, page, book_type: str, mes: int, ano: int) -> Optional[List[Dict[str, Any]]]:
+    def _fetch_book_data(self, page, book_type: str, mes: int, ano: int, rut: str) -> Optional[List[Dict[str, Any]]]:
         """
         Obtener datos de un libro (COMPRAS o VENTAS) descargando el CSV
         
@@ -297,6 +297,7 @@ class SIIScraper:
             book_type: "COMPRAS" o "VENTAS"
             mes: Mes (1-12)
             ano: Año (YYYY)
+            rut: RUT a consultar (para seleccionar en cascada si aplica)
             
         Returns:
             Lista de registros del libro parseados desde CSV o None si hay error
